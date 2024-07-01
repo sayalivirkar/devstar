@@ -1,11 +1,15 @@
 <script>
-
+  import MetaTagInput from "./components/metaTagInput.svelte";
 </script>
 
-<div class="card gap-16 items-center mx-auto max-w-screen-xl lg:grid lg:grid-cols-2 overflow-hidden rounded-lg">
-	<!-- Add tool here -->
-</div>
+<main class="w-full container mx-auto px-4 py-8">
+  <div class="flex items-center flex-col justify-center">
+    <h1
+      class="font-bold text-2xl sm:text-3xl tracking-tight leading-none text-gray-900 dark:text-white mb-6"
+    >
+      Metatag Checker
+    </h1>
 
-<style>
-
-</style>
+    <MetaTagInput />
+  </div>
+</main>
