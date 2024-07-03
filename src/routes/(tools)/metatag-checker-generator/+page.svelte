@@ -1,5 +1,48 @@
 <script>
+  import { onMount } from "svelte";
   import MetaTagInput from "./components/metaTagInput.svelte";
+  import MetaTagsDisplay from "./components/metaTagsDisplay.svelte";
+  import MetaTagGenerator from "./components/metaTagGenerator.svelte";
+
+  let url = "https://metatags.io/";
+  let metaTags = null;
+  let loading = false;
+  let error = null;
+
+  async function fetchMetaTags(url) {
+    loading = true;
+    try {
+      const response = await fetch("/metatag-checker-generator/api/meta-tags", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url }),
+      });
+      metaTags = await response.json();
+      console.log(metaTags)
+      error = null;
+    } catch (err) {
+      console.error("Error fetching meta tags:", err);
+      error = "Error fetching meta tags";
+      metaTags = null;
+    } finally {
+      loading = false;
+    }
+  }
+
+  function handleCheck(event) {
+    url = event.detail.url;
+    if (!url) {
+      error = "Please enter a URL";
+      return;
+    }
+    fetchMetaTags(url);
+  }
+
+  onMount(() => {
+    fetchMetaTags(url);
+  });
 </script>
 
 <main class="w-full container mx-auto px-4 py-8">
@@ -10,6 +53,10 @@
       Metatag Checker
     </h1>
 
-    <MetaTagInput />
+    <MetaTagInput {url} {loading} on:check={handleCheck} />
+  </div>
+  <div class="flex flex-col md:flex-row items-start ">
+    <MetaTagGenerator />
+    <MetaTagsDisplay {metaTags} {error} {url} />
   </div>
 </main>
