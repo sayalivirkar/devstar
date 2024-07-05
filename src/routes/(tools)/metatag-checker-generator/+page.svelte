@@ -20,7 +20,8 @@
         body: JSON.stringify({ url }),
       });
       metaTags = await response.json();
-      console.log(metaTags)
+      // console.log("this is data", metaTags)
+      // console.log("this is data err", metaTags.error)
       error = null;
     } catch (err) {
       console.error("Error fetching meta tags:", err);
