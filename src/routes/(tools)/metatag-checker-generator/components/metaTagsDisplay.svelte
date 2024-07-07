@@ -47,11 +47,13 @@
         >
           Meta Tags for {url}
         </h2>
-        <img
-          src={metaTags.metaTags["og:image"]}
-          alt="sss"
-          class="rounded-md mb-2"
-        />
+        {#if metaTags.metaTags["og:image"]}
+          <img
+            src={metaTags.metaTags["og:image"]}
+            alt="sss"
+            class="rounded-md mb-2"
+          />
+        {/if}
         <ul class="space-y-2">
           {#each Object.entries(metaTags.metaTags) as [key, value]}
             <li class="dark:text-white"><strong>{key}:</strong> {value}</li>
