@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+
   import MetaTagInput from "./components/metaTagInput.svelte";
   import MetaTagsDisplay from "./components/metaTagsDisplay.svelte";
   import MetaTagGenerator from "./components/metaTagGenerator.svelte";
@@ -61,3 +61,4 @@
     <MetaTagsDisplay {metaTags} {error} {url} />
   </div>
 </main>
+
