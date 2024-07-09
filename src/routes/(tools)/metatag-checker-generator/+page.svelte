@@ -1,4 +1,5 @@
 <script>
+  // imports
   import { onMount } from "svelte";
   import MetaTagInput from "./components/metaTagInput.svelte";
   import MetaTagsDisplay from "./components/metaTagsDisplay.svelte";
@@ -9,6 +10,7 @@
   let loading = false;
   let error = null;
 
+  // function to fetch metatags
   async function fetchMetaTags(url) {
     loading = true;
     try {
@@ -32,6 +34,7 @@
     }
   }
 
+  // function to check url
   function handleCheck(event) {
     url = event.detail.url;
     if (!url) {
@@ -56,6 +59,7 @@
 
     <MetaTagInput {url} {loading} on:check={handleCheck} />
   </div>
+  
   <div class="min-h-[700px] flex flex-col md:flex-row items-start ">
     <MetaTagGenerator bind:metaTags />
     <MetaTagsDisplay {metaTags} {error} {url} />
