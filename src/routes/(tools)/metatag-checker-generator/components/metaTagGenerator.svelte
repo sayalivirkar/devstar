@@ -2,12 +2,14 @@
   import { Modal } from "flowbite-svelte";
   // import { onMount } from "svelte";
   import MetaTagCodeModal from "./metaTagCodeModal.svelte";
+  export let metaTags = null;
+  // console.log("this is gene", metaTags.metaTags.title);
 
   let popupModal = false;
   let imageUrl = "";
   let imageName = "";
   let title = "";
-  let description = " ";
+  let description = "";
   let url = "";
   let name = "";
   let contentType = "web";
@@ -28,7 +30,20 @@
   let twitterDescription = "";
   let twitterImage = "";
 
+  let isInitialized = false;
+
   let errors = {};
+
+  $: if (metaTags && metaTags.metaTags) {
+    imageUrl = metaTags.metaTags["og:image"] || "";
+    title = metaTags.metaTags.title || metaTags.metaTags["og:title"] || "";
+    description =
+      metaTags.metaTags.description ||
+      metaTags.metaTags["og:description"] ||
+      "";
+    url = metaTags.metaTags["og:url"] || "";
+    isInitialized = true;
+  }
 
   // upload functionality to show name of file and display preview
   function handleFileChange(event) {
@@ -36,6 +51,7 @@
     if (file) {
       imageUrl = URL.createObjectURL(file);
       imageName = file.name;
+      updateMetaTags();
     }
   }
 
@@ -46,11 +62,35 @@
     if (!title.trim()) errors.title = "Please enter a title";
     if (!description.trim()) errors.description = "Please enter a description";
     if (!url.trim()) errors.url = "Please enter a url";
-    if (!name.trim()) errors.name = "Please enter a url";
+    // if (!name.trim()) errors.name = "Please enter a url";
     return Object.keys(errors).length === 0;
   }
 
+  function updateMetaTags() {
+    metaTags = {
+      ...metaTags,
+      metaTags: {
+        ...metaTags.metaTags,
+        title: title,
+        description: description,
+        "og:title": title,
+        "og:description": description,
+        url: url,
+        "og:url": url,
+        "og:image":imageUrl,  
+      },
+    };
+  }
+
+  function handleInput(field, event) {
+    if (field === "title") title = event.target.value;
+    if (field === "description") description = event.target.value;
+    if (field === "url") url = event.target.value;
+    updateMetaTags();
+  }
+
   function handleSubmit() {
+    updateMetaTags();
     if (validateForm()) {
       // console.log({
       //   imageUrl,
@@ -110,9 +150,25 @@
               class="absolute inset-0 w-full h-full object-cover rounded-lg"
             />
             <div
-              class="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-50 flex items-center justify-center"
+              class="absolute inset-0 w-full h-full bg-gray-900 bg-opacity-50 flex flex-col items-center justify-center"
             >
               <span class="text-white text-sm">{imageName}</span>
+              <svg
+                class="w-8 h-8 mb-4 text-black dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 16"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                />
+              </svg>
+              <!-- <span>Upload</span> -->
             </div>
           {:else}
             <div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -163,7 +219,8 @@
         id="floating_title"
         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
         placeholder=" "
-        bind:value={title}
+        value={title}
+        on:input={(e) => handleInput("title", e)}
         required
       />
       <label
@@ -189,7 +246,8 @@
         rows="4"
         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         placeholder="Write your thoughts here..."
-        bind:value={description}
+        value={description}
+        on:input={(e) => handleInput("description", e)}
       ></textarea>
       {#if errors.description}
         <p class="text-red-500 text-xs mt-1">{errors.description}</p>
@@ -204,7 +262,8 @@
         id="floating_title"
         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
         placeholder=" "
-        bind:value={url}
+        value={url}
+        on:input={(e) => handleInput("url", e)}
         required
       />
       <label
@@ -227,7 +286,6 @@
         class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
         placeholder=" "
         bind:value={name}
-        required
       />
       <label
         for="floating_title"
@@ -521,7 +579,7 @@
   bind:open={popupModal}
   size="lg"
 >
-  <div class="p-4 ">
+  <div class="p-4">
     <h1 class="text-center font-bold md:text-2xl mb-4">MetaTags Code</h1>
     <MetaTagCodeModal
       {imageUrl}

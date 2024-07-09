@@ -56,8 +56,8 @@
 
     <MetaTagInput {url} {loading} on:check={handleCheck} />
   </div>
-  <div class="flex flex-col md:flex-row items-start ">
-    <MetaTagGenerator />
+  <div class="min-h-[700px] flex flex-col md:flex-row items-start ">
+    <MetaTagGenerator bind:metaTags />
     <MetaTagsDisplay {metaTags} {error} {url} />
   </div>
 </main>
